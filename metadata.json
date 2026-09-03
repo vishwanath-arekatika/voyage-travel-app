@@ -1,0 +1,6 @@
+{
+  "name": "Voyage – World Travel Discovery",
+  "description": "World destination explorer, live weather, curated places, Gemini AI travel assistant, and interactive day-by-day itinerary planner.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
