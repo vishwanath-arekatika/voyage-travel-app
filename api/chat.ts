@@ -22,9 +22,19 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const { message, destination, conversationHistory = [] } = req.body || {};
+    let body = req.body;
+    if (typeof body === "string") {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        body = {};
+      }
+    }
+    const { message, destination, conversationHistory = [] } = body || {};
     if (!message || typeof message !== "string") {
-      return res.status(400).json({ error: "Message is required" });
+      return res.status(200).json({
+        reply: "Hello! Where are you planning your next journey? Feel free to ask about any destination, best times to travel, packing essentials, or local cultural highlights!",
+      });
     }
 
     const ai = getGeminiClient();
@@ -68,7 +78,12 @@ Keep your answers engaging, concise, and structured with clean markdown (bold hi
       : message;
 
     let reply = "";
-    const modelsToTry = ["gemini-3.8-flash", "gemini-3.1-flash-lite", "gemini-flash-latest"];
+    const modelsToTry = [
+      "gemini-2.5-flash",
+      "gemini-3.1-flash-lite",
+      "gemini-3.8-flash",
+      "gemini-flash-latest",
+    ];
 
     for (const modelName of modelsToTry) {
       try {

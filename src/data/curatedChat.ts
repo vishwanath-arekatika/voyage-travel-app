@@ -114,7 +114,92 @@ export function generateCuratedChatReply(
     );
   }
 
-  // 6. Default Comprehensive Travel Insight
+  // 6. Duration / How long to stay
+  if (
+    query.includes("how long") ||
+    query.includes("how many days") ||
+    query.includes("duration") ||
+    query.includes("days to spend") ||
+    query.includes("time to spend") ||
+    query.includes("length")
+  ) {
+    return (
+      `### Ideal Stay Duration: ${destName}\n\n` +
+      `To experience **${destName}** with an unhurried, enriching pace:\n\n` +
+      `- **Recommended Stay**: **4 to 7 days** is the sweet spot. This allows you to explore major landmarks without rushing, while leaving ample room for spontaneous neighborhood wanders.\n` +
+      `- **Quick Weekend / 3-Day Sprint**: Focus tightly on the historic core and top iconic sights.\n` +
+      `- **Extended 7 to 10-Day Immersion**: Allows day excursions into surrounding valleys, coastal archipelagos, and quiet artisanal villages.\n\n` +
+      `*Use the AI Itinerary tab to generate a day-by-day blueprint tailored to your preferred duration!*`
+    );
+  }
+
+  // 7. Weather / Climate / Best time
+  if (
+    query.includes("weather") ||
+    query.includes("climate") ||
+    query.includes("season") ||
+    query.includes("temperature") ||
+    query.includes("rain") ||
+    query.includes("when to go") ||
+    query.includes("best time")
+  ) {
+    return (
+      `### Seasonal & Climate Brief: ${destName}\n\n` +
+      `Understanding the climate rhythms for **${destName}**, ${country}:\n\n` +
+      `- **Peak Window**: **${bestTime}**.\n` +
+      `- **Atmosphere**: Clear radiant skies, comfortable humidity, and optimal light for landscape and architectural photography.\n` +
+      `- **Shoulder Season Advantage**: Arriving just before or after peak season offers lower accommodation rates, serene streets, and gentle weather.\n` +
+      `- **Live Conditions**: Check the **Live Weather Hub** tab for current real-time temperature, humidity, and 5-day forecasts.\n\n` +
+      `*Pack versatile layers to transition effortlessly from warm sunny afternoons to breezy twilight evenings.*`
+    );
+  }
+
+  // 8. Budget / Cost / Currency
+  if (
+    query.includes("cost") ||
+    query.includes("budget") ||
+    query.includes("expensive") ||
+    query.includes("price") ||
+    query.includes("money") ||
+    query.includes("currency")
+  ) {
+    return (
+      `### Financial & Budget Guidance: ${destName}\n\n` +
+      `Navigating expenses and payments in **${destName}**:\n\n` +
+      `- **Official Currency**: **${currency}**.\n` +
+      `- **Daily Estimates**:\n` +
+      `  * *Value / Budget Explorer*: $70 – $120 USD / day (local bistros, public transport, boutique guesthouses)\n` +
+      `  * *Comfort / Premium Traveler*: $160 – $280 USD / day (historic boutique hotels, guided highlights, fine dining)\n` +
+      `  * *Luxury Living*: $450+ USD / day (private overwater suites, tailored private excursions, exclusive gastronomy)\n` +
+      `- **Card vs. Cash**: Contactless cards are standard in central establishments, but keeping a modest reserve of local currency is essential for market stalls, small water taxis, or artisanal tips.\n\n` +
+      `*Tip: Look for neighborhood bakeries and local lunch sets for Michelin-quality gastronomy at modest prices.*`
+    );
+  }
+
+  // 9. Transport / Getting Around
+  if (
+    query.includes("transport") ||
+    query.includes("getting around") ||
+    query.includes("taxi") ||
+    query.includes("flight") ||
+    query.includes("train") ||
+    query.includes("bus") ||
+    query.includes("metro") ||
+    query.includes("boat") ||
+    query.includes("ferry")
+  ) {
+    return (
+      `### Transit & Getting Around: ${destName}\n\n` +
+      `Effortless movement across **${destName}**, ${country}:\n\n` +
+      `- **Arrival**: Central transit hubs connect via high-speed rail, express highway coaches, or regional speedboats/seaplanes depending on terrain.\n` +
+      `- **Local Mobility**: The central quarters are best discovered on foot. Cobblestones and waterfront promenades invite slow exploration.\n` +
+      `- **Public Transit**: Reliable, clean, and punctual options exist across major routes. Download digital transit passes or tap-to-pay cards.\n` +
+      `- **Private Rides & Taxis**: Licensed taxis and ride-hailing services are readily available; always confirm fares or verify the meter before departure.\n\n` +
+      `*Traveler note: Allow extra transit buffer during peak morning hours (8:00 AM – 9:30 AM).*`
+    );
+  }
+
+  // 10. Default Comprehensive Travel Insight
   return (
     `### Travel Curator Insights: ${destName}\n\n` +
     `Welcome to **${destName}**, ${country}! Here is your curator brief:\n\n` +
@@ -123,6 +208,6 @@ export function generateCuratedChatReply(
     `- **Key Landmarks**: ${landmarks || "Architectural monuments and scenic vistas"}.\n` +
     `- **Recommended Duration**: 4 to 7 days for a balanced pace between iconic sights and relaxed exploration.\n` +
     `- **Language & Currency**: ${language} • ${currency}\n\n` +
-    `Ask me about specific neighborhood walks, packing advice, local etiquette, or dining rituals!`
+    `Ask me about specific neighborhood walks, packing advice, local etiquette, beaches, or dining rituals!`
   );
 }

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Destination, Itinerary } from "../types";
 import { planItinerary } from "../services/api";
+import { generateCuratedItinerary } from "../data/curatedItinerary";
 import { DESTINATIONS } from "../data/destinations";
 
 interface ItineraryPlannerProps {
@@ -78,10 +79,19 @@ export const ItineraryPlanner: React.FC<ItineraryPlannerProps> = ({
         companions,
         interests: selectedInterests,
       });
-      setItinerary(result);
-      setActiveDayTab(1);
+      if (result && result.days && result.days.length > 0) {
+        setItinerary(result);
+        setActiveDayTab(1);
+      } else {
+        const fallback = generateCuratedItinerary(destinationName, country, durationDays, travelStyle, budget);
+        setItinerary(fallback);
+        setActiveDayTab(1);
+      }
     } catch (err) {
-      console.error("Failed to generate itinerary:", err);
+      console.warn("Client fallback itinerary engaged:", err);
+      const fallback = generateCuratedItinerary(destinationName, country, durationDays, travelStyle, budget);
+      setItinerary(fallback);
+      setActiveDayTab(1);
     } finally {
       setLoading(false);
     }

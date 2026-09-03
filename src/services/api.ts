@@ -1,5 +1,7 @@
 import { WeatherData, Itinerary, Destination } from "../types";
 import { getCuratedPhotos } from "../data/curatedPhotos";
+import { generateCuratedChatReply } from "../data/curatedChat";
+import { generateCuratedItinerary } from "../data/curatedItinerary";
 
 // In-memory weather cache to minimize duplicate requests
 const weatherCache = new Map<string, { data: WeatherData; timestamp: number }>();
@@ -74,12 +76,21 @@ export async function sendAIChat(
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message, destination, conversationHistory }),
     });
-    const data = await res.json();
-    return data.reply || data.fallback || "I'm here to assist with all your travel queries. Please feel free to ask!";
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.reply && typeof data.reply === "string" && data.reply.trim()) {
+        return data.reply;
+      }
+      if (data && data.fallback && typeof data.fallback === "string" && data.fallback.trim()) {
+        return data.fallback;
+      }
+    }
   } catch (err) {
-    console.error("AI Chat error:", err);
-    return `### Travel Guide for ${destination?.name || "Your Journey"}\n\nHere are some recommendations:\n- **Recommended length**: 4 to 6 days\n- **Best season**: Spring or Autumn\n- **Must-see**: Local historic quarters and scenic viewpoints\n\n*(Note: Ensure Gemini API key is configured in settings for full conversation)*`;
+    console.warn("AI Chat API call unavailable, activating curator engine:", err);
   }
+
+  // Client-side intelligent curated response tailored directly to destination and question
+  return generateCuratedChatReply(message, destination);
 }
 
 export const sendChatMessage = sendAIChat;
@@ -99,15 +110,29 @@ export async function planItinerary(params: {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
     });
-    const data = await res.json();
-    if (data.itinerary) {
-      return data.itinerary;
+    if (res.ok) {
+      const data = await res.json();
+      if (
+        data &&
+        data.itinerary &&
+        Array.isArray(data.itinerary.days) &&
+        data.itinerary.days.length > 0
+      ) {
+        return data.itinerary;
+      }
     }
-    throw new Error(data.error || "Failed to generate itinerary");
   } catch (err) {
-    console.error("Itinerary planning error:", err);
-    throw err;
+    console.warn("Itinerary server endpoint unavailable, synthesizing curated plan:", err);
   }
+
+  // Guaranteed client-side itinerary generator with matching landmarks and days
+  return generateCuratedItinerary(
+    params.destination,
+    params.country || "",
+    params.durationDays,
+    params.travelStyle,
+    params.budget
+  );
 }
 
 export interface PhotoItem {

@@ -22,19 +22,24 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
+    let body = req.body;
+    if (typeof body === "string") {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        body = {};
+      }
+    }
+
     const {
-      destination,
-      country,
+      destination = "Kyoto",
+      country = "Japan",
       durationDays = 3,
       travelStyle = "Cultural & Highlights",
       budget = "Moderate",
       companions = "Solo",
       interests = [],
-    } = req.body || {};
-
-    if (!destination) {
-      return res.status(400).json({ error: "Destination is required" });
-    }
+    } = body || {};
 
     const ai = getGeminiClient();
 
@@ -99,7 +104,12 @@ Strictly return a valid JSON object matching this schema:
 }`;
 
     let parsedItinerary: any = null;
-    const modelsToTry = ["gemini-3.8-flash", "gemini-3.1-flash-lite", "gemini-flash-latest"];
+    const modelsToTry = [
+      "gemini-2.5-flash",
+      "gemini-3.1-flash-lite",
+      "gemini-3.8-flash",
+      "gemini-flash-latest",
+    ];
 
     for (const modelName of modelsToTry) {
       try {
